@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survei IKM 2026 - RS Bhayangkara Bondowoso</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .loading { display: none; }
+        .submitting .loading { display: inline-block; }
+        .submitting .btn-text { display: none; }
+        .modal-active { display: flex !important; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <div class="max-w-3xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+            <div class="bg-blue-800 h-2 w-full"></div>
+            <div class="p-6 text-center">
+                <h1 class="text-xl font-extrabold text-blue-900 uppercase leading-tight">RS BHAYANGKARA BONDOWOSO</h1>
+                <h3 class="text-lg font-bold text-gray-700 mt-2 uppercase">Survei Kepuasan Layanan (IKM 2026)</h3>
+                <p class="text-xs text-gray-500 mt-2 italic border-t pt-2 uppercase">Biddokkes Polda Jatim - Bondowoso</p>
+            </div>
+        </div>
+
+        <form id="surveyForm" name="google-sheet" class="space-y-6">
+            <!-- Data Profil -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                <h4 class="text-blue-800 font-bold mb-4 border-b pb-2 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    Identitas & Waktu Layanan
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Unit Layanan</label>
+                        <input type="text" name="Unit_Layanan" placeholder="..." required class="w-full px-4 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Kabupaten/Kota</label>
+                        <input type="text" name="Kota" placeholder="..." required class="w-full px-4 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200">
+                    </div>
+                    
+                    <div class="md:col-span-2 py-2">
+                        <label class="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wider">Jam Survei:</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <label class="flex items-center p-3 border rounded-xl cursor-pointer hover:bg-blue-50 transition-all border-gray-200 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
+                                <input type="radio" name="Jam_Survei" value="08.00 - 12.00" required class="w-4 h-4 text-blue-600">
+                                <span class="ml-3 font-medium text-gray-700">08.00 - 12.00</span>
+                            </label>
+                            <label class="flex items-center p-3 border rounded-xl cursor-pointer hover:bg-blue-50 transition-all border-gray-200 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
+                                <input type="radio" name="Jam_Survei" value="13.00 - 17.00" class="w-4 h-4 text-blue-600">
+                                <span class="ml-3 font-medium text-gray-700">13.00 - 17.00</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Jenis Kelamin</label>
+                        <select name="Jenis_Kelamin" required class="w-full px-4 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-200">
+                            <option value="">Pilih...</option>
+                            <option value="L">Laki-laki (L)</option>
+                            <option value="P">Perempuan (P)</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Usia (Tahun)</label>
+                        <input type="number" name="Usia" placeholder="..." required class="w-full px-4 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Pendidikan</label>
+                        <select name="Pendidikan" required class="w-full px-4 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-200">
+                            <option value="">Pilih...</option>
+                            <option>SD</option><option>SMP</option><option>SMA</option><option>D3</option><option>S1</option><option>S2</option><option>S3</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Pekerjaan</label>
+                        <select name="Pekerjaan" required class="w-full px-4 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-200">
+                            <option value="">Pilih...</option>
+                            <option>PNS</option><option>TNI</option><option>POLRI</option><option>SWASTA</option><option>WIRAUSAHA</option><option>LAINNYA</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pertanyaan IKM -->
+            <div id="questionsContainer" class="space-y-6"></div>
+
+            <button type="submit" id="submitBtn" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-5 rounded-2xl shadow-xl transition-all transform active:scale-95 mb-10 flex items-center justify-center">
+                <span class="btn-text text-lg tracking-wide uppercase">Kirim Tanggapan</span>
+                <span class="loading animate-spin mr-2 border-3 border-white border-t-transparent rounded-full w-6 h-6"></span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Modal Success -->
+    <div id="modalSuccess" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-[9999]">
+        <div class="bg-white rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl">
+            <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <h2 class="text-2xl font-black text-gray-800 mb-2">BERHASIL!</h2>
+            <p class="text-gray-600 mb-8 leading-relaxed">Data survei Anda telah berhasil kami simpan.</p>
+            <button type="button" id="closeBtn" class="w-full bg-blue-700 hover:bg-blue-800 text-white py-4 rounded-xl font-bold shadow-lg transition-all active:scale-95">
+                KEMBALI KE FORM
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // GANTI URL DI BAWAH INI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyIQgHM21tDaENXzDAraYnVJUx84UuIj7GE7ld5TVRgykM7nUWkjWNkgcuHW6PVgZzC6A/exec';
+
+        const questions = [
+            { id: 1, text: "Bagaimana pendapat saudara tentang persyaratan pelayanan dengan jenis pelayanannya?", options: ["Tidak sesuai", "Kurang sesuai", "Sesuai", "Sangat sesuai"] },
+            { id: 2, text: "Bagaimana pendapat saudara tentang kemudahan prosedur pelayanan di unit ini?", options: ["Tidak mudah", "Kurang mudah", "Mudah", "Sangat mudah"] },
+            { id: 3, text: "Bagaimana pendapat saudara tentang kecepatan waktu dalam memberikan pelayanan?", options: ["Tidak cepat", "Kurang cepat", "Cepat", "Sangat cepat"] },
+            { id: 4, text: "Bagaimana pendapat saudara tentang kewajaran biaya/tarif dalam pelayanan?", options: ["Tidak terjangkau/Mahal", "Terjangkau/Cukup", "Murah", "Gratis"] },
+            { id: 5, text: "Bagaimana pendapat saudara tentang pelayanan yang diberikan?", options: ["Tidak sesuai", "Kurang sesuai", "Sesuai", "Sangat sesuai"] },
+            { id: 6, text: "Bagaimana pendapat saudara tentang kemampuan petugas dalam pelayanan?", options: ["Tidak kompeten", "Kurang kompeten", "Kompeten", "Sangat kompeten"] },
+            { id: 7, text: "Bagaimana pendapat saudara tentang respon petugas dalam memberikan pelayanan?", options: ["Buruk", "Cukup", "Baik", "Sangat baik"] },
+            { id: 8, text: "Bagaimana pendapat saudara tentang penanganan pengaduan layanan?", options: ["Tidak ada", "Ada tetapi tidak berfungsi", "Berfungsi kurang maksimal", "Dikelola dengan baik"] },
+            { id: 9, text: "Bagaimana pendapat saudara tentang kualitas sarana dan prasarana pelayanan?", options: ["Buruk", "Cukup", "Baik", "Sangat baik"] }
+        ];
+
+        const container = document.getElementById('questionsContainer');
+        questions.forEach(q => {
+            const card = document.createElement('div');
+            card.className = "bg-white p-6 rounded-2xl shadow-sm border border-gray-200";
+            card.innerHTML = `
+                <div class="flex items-start mb-4">
+                    <span class="bg-blue-100 text-blue-700 w-7 h-7 rounded-lg flex items-center justify-center font-bold text-sm mr-3 mt-0.5">${q.id}</span>
+                    <p class="text-gray-800 font-semibold leading-relaxed">${q.text}</p>
+                </div>
+                <div class="grid grid-cols-1 gap-2">
+                    ${q.options.map((opt, i) => `
+                        <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-gray-50 transition-all border-gray-100 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
+                            <input type="radio" name="Q${q.id}" value="${i+1}" required class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                            <span class="ml-3 text-sm font-medium text-gray-700">${opt}</span>
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+            container.appendChild(card);
+        });
+
+        const form = document.getElementById('surveyForm');
+        const modal = document.getElementById('modalSuccess');
+        const closeBtn = document.getElementById('closeBtn');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.classList.add('submitting');
+            submitBtn.disabled = true;
+            
+            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                .then(response => {
+                    modal.classList.add('modal-active');
+                    form.reset();
+                })
+                .catch(error => {
+                    alert('Gagal mengirim! Silakan periksa koneksi internet Anda.');
+                })
+                .finally(() => {
+                    submitBtn.classList.remove('submitting');
+                    submitBtn.disabled = false;
+                });
+        });
+
+        closeBtn.onclick = function() {
+            window.location.reload();
+        };
+    </script>
+</body>
+</html>
