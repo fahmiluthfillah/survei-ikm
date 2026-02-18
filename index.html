@@ -37,11 +37,11 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="space-y-1">
                         <label class="text-xs font-bold text-gray-500 uppercase">Unit Layanan</label>
-                        <input type="text" name="Unit_Layanan" placeholder="..." required class="w-full px-4 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200">
+                        <input type="text" name="Unit_Layanan" placeholder="Contoh: Poli Gigi" required class="w-full px-4 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200">
                     </div>
                     <div class="space-y-1">
                         <label class="text-xs font-bold text-gray-500 uppercase">Kabupaten/Kota</label>
-                        <input type="text" name="Kota" placeholder="..." required class="w-full px-4 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200">
+                        <input type="text" name="Kota" placeholder="Contoh: Bondowoso" required class="w-full px-4 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200">
                     </div>
                     
                     <div class="md:col-span-2 py-2">
@@ -68,7 +68,7 @@
                     </div>
                     <div class="space-y-1">
                         <label class="text-xs font-bold text-gray-500 uppercase">Usia (Tahun)</label>
-                        <input type="number" name="Usia" placeholder="..." required class="w-full px-4 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200">
+                        <input type="number" name="Usia" placeholder="Contoh: 30" required class="w-full px-4 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200">
                     </div>
                     <div class="space-y-1">
                         <label class="text-xs font-bold text-gray-500 uppercase">Pendidikan</label>
@@ -84,11 +84,24 @@
                             <option>PNS</option><option>TNI</option><option>POLRI</option><option>SWASTA</option><option>WIRAUSAHA</option><option>LAINNYA</option>
                         </select>
                     </div>
+                    <div class="md:col-span-2 space-y-1">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Jenis Layanan yang Diterima</label>
+                        <input type="text" name="Jenis_Layanan" placeholder="Sebutkan layanan..." required class="w-full px-4 py-2 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200">
+                    </div>
                 </div>
             </div>
 
-            <!-- Pertanyaan IKM -->
+            <!-- Pertanyaan IKM Otomatis -->
             <div id="questionsContainer" class="space-y-6"></div>
+
+            <!-- Pertanyaan 10: Kritik & Saran -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                <div class="flex items-start mb-4">
+                    <span class="bg-blue-100 text-blue-700 w-7 h-7 rounded-lg flex items-center justify-center font-bold text-sm mr-3 mt-0.5">10</span>
+                    <p class="text-gray-800 font-semibold leading-relaxed tracking-tight">Kritik / Saran</p>
+                </div>
+                <textarea name="Kritik_Saran" rows="4" placeholder="Tuliskan kritik atau saran Anda di sini agar kami bisa melayani lebih baik..." class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-100 bg-gray-50 resize-none"></textarea>
+            </div>
 
             <button type="submit" id="submitBtn" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-5 rounded-2xl shadow-xl transition-all transform active:scale-95 mb-10 flex items-center justify-center">
                 <span class="btn-text text-lg tracking-wide uppercase">Kirim Tanggapan</span>
@@ -103,16 +116,15 @@
             <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
             </div>
-            <h2 class="text-2xl font-black text-gray-800 mb-2">BERHASIL!</h2>
-            <p class="text-gray-600 mb-8 leading-relaxed">Data survei Anda telah berhasil kami simpan.</p>
-            <button type="button" id="closeBtn" class="w-full bg-blue-700 hover:bg-blue-800 text-white py-4 rounded-xl font-bold shadow-lg transition-all active:scale-95">
-                KEMBALI KE FORM
+            <h2 class="text-2xl font-black text-gray-800 mb-2 uppercase">Berhasil!</h2>
+            <p class="text-gray-600 mb-8 leading-relaxed">Terima kasih. Data survei Anda telah berhasil kami simpan.</p>
+            <button type="button" id="closeBtn" class="w-full bg-blue-700 hover:bg-blue-800 text-white py-4 rounded-xl font-bold shadow-lg transition-all active:scale-95 uppercase">
+                Kembali
             </button>
         </div>
     </div>
 
     <script>
-        // GANTI URL DI BAWAH INI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyIQgHM21tDaENXzDAraYnVJUx84UuIj7GE7ld5TVRgykM7nUWkjWNkgcuHW6PVgZzC6A/exec';
 
         const questions = [
@@ -134,7 +146,7 @@
             card.innerHTML = `
                 <div class="flex items-start mb-4">
                     <span class="bg-blue-100 text-blue-700 w-7 h-7 rounded-lg flex items-center justify-center font-bold text-sm mr-3 mt-0.5">${q.id}</span>
-                    <p class="text-gray-800 font-semibold leading-relaxed">${q.text}</p>
+                    <p class="text-gray-800 font-semibold leading-relaxed tracking-tight">${q.text}</p>
                 </div>
                 <div class="grid grid-cols-1 gap-2">
                     ${q.options.map((opt, i) => `
@@ -164,7 +176,7 @@
                     form.reset();
                 })
                 .catch(error => {
-                    alert('Gagal mengirim! Silakan periksa koneksi internet Anda.');
+                    alert('Gagal mengirim! Periksa koneksi internet Anda.');
                 })
                 .finally(() => {
                     submitBtn.classList.remove('submitting');
