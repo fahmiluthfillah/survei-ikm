@@ -4,27 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Survei IKM 2026 - RS Bhayangkara Bondowoso</title>
+    <!-- FIX #8: Pindah dari @import ke <link> — lebih cepat load -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
+        body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+
         .loading { display: none; }
         .submitting .loading { display: inline-block; }
         .submitting .btn-text { display: none; }
-        
-        input[type="radio"]:checked + span { color: #1e40af; font-weight: 700; }
+
+        /* FIX #9: Highlight field yang error */
+        .field-error input,
+        .field-error select,
+        .field-error textarea {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239,68,68,0.15);
+        }
+        .field-error .error-msg { display: block !important; }
+
+        .error-msg {
+            display: none;
+            color: #ef4444;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 4px;
+            margin-left: 4px;
+        }
+
+        /* Radio group error */
+        .radio-group-error .radio-error-msg { display: block !important; }
+        .radio-error-msg {
+            display: none;
+            color: #ef4444;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
         .modal-active { display: flex !important; }
 
-        /* Style agar ring merah saat error lebih terlihat */
-        input:invalid:focus, select:invalid:focus, textarea:invalid:focus {
-            --tw-ring-color: #ef4444;
-            border-color: #ef4444;
+        /* Modal animasi masuk */
+        @keyframes popIn {
+            0%   { transform: scale(0.85); opacity: 0; }
+            70%  { transform: scale(1.04); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .modal-card { animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+        /* Konfirmasi dialog */
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to   { transform: translateY(0); opacity: 1; }
+        }
+        .confirm-card { animation: slideUp 0.3s ease-out forwards; }
+
+        /* Scroll glow efek saat field error difokus */
+        .shake {
+            animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+        }
+        @keyframes shake {
+            10%, 90% { transform: translateX(-2px); }
+            20%, 80% { transform: translateX(3px); }
+            30%, 50%, 70% { transform: translateX(-3px); }
+            40%, 60% { transform: translateX(3px); }
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen pb-12">
+<body class="bg-slate-50 min-h-screen pb-12">
 
+    <!-- Progress Bar -->
     <div class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div class="max-w-3xl mx-auto px-4 py-3">
             <div class="flex justify-between items-center mb-1">
@@ -38,6 +89,7 @@
     </div>
 
     <div class="max-w-3xl mx-auto px-4 py-8">
+        <!-- Header -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
             <div class="bg-blue-800 h-2 w-full"></div>
             <div class="p-6 text-center">
@@ -47,27 +99,34 @@
             </div>
         </div>
 
-        <form id="surveyForm" name="google-sheet" class="space-y-6">
+        <form id="surveyForm" name="google-sheet" novalidate class="space-y-6">
+
+            <!-- Identitas -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
                 <h4 class="text-blue-800 font-bold mb-5 border-b pb-3 flex items-center uppercase text-sm tracking-wide">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                     Identitas & Waktu Layanan
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
                     <div class="space-y-1.5">
                         <label class="text-[11px] font-bold text-gray-500 uppercase ml-1">Unit Layanan</label>
-                        <input type="text" name="Unit_Layanan" placeholder="Poli Gigi / UGD / Rawat Inap" required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200 transition-all">
+                        <input type="text" name="Unit_Layanan" placeholder="Poli Gigi / UGD / Rawat Inap" data-required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200 transition-all">
+                        <span class="error-msg">⚠ Wajib diisi</span>
                     </div>
+
                     <div class="space-y-1.5">
                         <label class="text-[11px] font-bold text-gray-500 uppercase ml-1">Kabupaten/Kota</label>
-                        <input type="text" name="Kota" placeholder="Contoh: Bondowoso" required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200 transition-all">
+                        <input type="text" name="Kota" placeholder="Contoh: Bondowoso" data-required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200 transition-all">
+                        <span class="error-msg">⚠ Wajib diisi</span>
                     </div>
-                    
-                    <div class="md:col-span-2 py-2">
+
+                    <!-- FIX #1 & #3: Radio Jam Survei — validasi ditangani manual -->
+                    <div class="md:col-span-2 py-2" id="group-Jam_Survei">
                         <label class="block text-xs font-bold text-gray-700 mb-3 uppercase tracking-wider">Jam Survei:</label>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-blue-50 transition-all border-gray-200 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 group">
-                                <input type="radio" name="Jam_Survei" value="08.00 - 12.00" required class="w-4 h-4 text-blue-600">
+                                <input type="radio" name="Jam_Survei" value="08.00 - 12.00" class="w-4 h-4 text-blue-600">
                                 <span class="ml-3 font-semibold text-gray-600 group-has-[:checked]:text-blue-800">08.00 - 12.00</span>
                             </label>
                             <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-blue-50 transition-all border-gray-200 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 group">
@@ -75,49 +134,64 @@
                                 <span class="ml-3 font-semibold text-gray-600 group-has-[:checked]:text-blue-800">13.00 - 17.00</span>
                             </label>
                         </div>
+                        <span class="radio-error-msg">⚠ Pilih salah satu jam survei</span>
                     </div>
 
                     <div class="space-y-1.5">
                         <label class="text-[11px] font-bold text-gray-500 uppercase ml-1">Jenis Kelamin</label>
-                        <select name="Jenis_Kelamin" required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-200 transition-all text-sm">
+                        <select name="Jenis_Kelamin" data-required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-200 transition-all text-sm">
                             <option value="">Pilih...</option>
                             <option value="L">Laki-laki (L)</option>
                             <option value="P">Perempuan (P)</option>
                         </select>
+                        <span class="error-msg">⚠ Wajib dipilih</span>
                     </div>
+
                     <div class="space-y-1.5">
                         <label class="text-[11px] font-bold text-gray-500 uppercase ml-1">Usia (Tahun)</label>
-                        <input type="number" name="Usia" placeholder="Contoh: 30" min="1" max="100" inputmode="numeric" required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200 transition-all">
+                        <input type="number" name="Usia" placeholder="Contoh: 30" min="1" max="120" inputmode="numeric" data-required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200 transition-all">
+                        <span class="error-msg">⚠ Wajib diisi (1–120)</span>
                     </div>
+
                     <div class="space-y-1.5">
                         <label class="text-[11px] font-bold text-gray-500 uppercase ml-1">Pendidikan</label>
-                        <select name="Pendidikan" required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-200 transition-all text-sm">
+                        <select name="Pendidikan" data-required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-200 transition-all text-sm">
                             <option value="">Pilih...</option>
                             <option>SD</option><option>SMP</option><option>SMA</option><option>D3</option><option>S1</option><option>S2</option><option>S3</option>
                         </select>
+                        <span class="error-msg">⚠ Wajib dipilih</span>
                     </div>
+
                     <div class="space-y-1.5">
                         <label class="text-[11px] font-bold text-gray-500 uppercase ml-1">Pekerjaan</label>
-                        <select name="Pekerjaan" required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-200 transition-all text-sm">
+                        <select name="Pekerjaan" data-required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-200 transition-all text-sm">
                             <option value="">Pilih...</option>
                             <option>PNS</option><option>TNI</option><option>POLRI</option><option>SWASTA</option><option>WIRAUSAHA</option><option>LAINNYA</option>
                         </select>
+                        <span class="error-msg">⚠ Wajib dipilih</span>
                     </div>
+
                     <div class="md:col-span-2 space-y-1.5">
-                        <label class="text-[11px] font-bold text-gray-500 uppercase ml-1 text-blue-700">Jenis Layanan yang Diterima</label>
-                        <input type="text" name="Jenis_Layanan" placeholder="Sebutkan layanan yang Anda dapatkan hari ini..." required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200 transition-all">
+                        <label class="text-[11px] font-bold text-blue-700 uppercase ml-1">Jenis Layanan yang Diterima</label>
+                        <input type="text" name="Jenis_Layanan" placeholder="Sebutkan layanan yang Anda dapatkan hari ini..." data-required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-200 transition-all">
+                        <span class="error-msg">⚠ Wajib diisi</span>
                     </div>
                 </div>
             </div>
 
+            <!-- Pertanyaan 1–9 (dibuat dinamis via JS) -->
             <div id="questionsContainer" class="space-y-6"></div>
 
+            <!-- FIX #6: Kritik/Saran → OPSIONAL (hapus data-required) -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
                 <div class="flex items-start mb-4">
                     <span class="bg-blue-100 text-blue-700 w-7 h-7 rounded-lg flex items-center justify-center font-bold text-sm mr-3 mt-0.5 shadow-sm">10</span>
-                    <p class="text-gray-800 font-bold leading-relaxed tracking-tight text-[15px]">Kritik / Saran untuk RS Bhayangkara Bondowoso</p>
+                    <div>
+                        <p class="text-gray-800 font-bold leading-relaxed tracking-tight text-[15px]">Kritik / Saran untuk RS Bhayangkara Bondowoso</p>
+                        <p class="text-[11px] text-gray-400 mt-0.5 font-medium">Opsional — boleh dikosongkan</p>
+                    </div>
                 </div>
-                <textarea name="Kritik_Saran" rows="4" placeholder="Tuliskan kritik atau saran Anda di sini..." required class="w-full px-4 py-4 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-100 bg-gray-50 resize-none transition-all focus:bg-white"></textarea>
+                <textarea name="Kritik_Saran" rows="4" placeholder="Tuliskan kritik atau saran Anda di sini..." class="w-full px-4 py-4 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-100 bg-gray-50 resize-none transition-all focus:bg-white"></textarea>
             </div>
 
             <button type="submit" id="submitBtn" class="group w-full bg-blue-700 hover:bg-blue-800 text-white font-extrabold py-5 rounded-2xl shadow-xl shadow-blue-200 transition-all transform active:scale-[0.98] flex items-center justify-center">
@@ -127,13 +201,30 @@
         </form>
     </div>
 
-    <div id="modalSuccess" class="fixed inset-0 bg-blue-900/40 backdrop-blur-sm hidden items-center justify-center p-4 z-[9999] transition-all">
-        <div class="bg-white rounded-[2.5rem] p-8 max-w-sm w-full text-center shadow-2xl transform transition-all scale-110">
+    <!-- FIX #5: Modal Konfirmasi Sebelum Submit -->
+    <div id="modalConfirm" class="fixed inset-0 bg-blue-900/40 backdrop-blur-sm hidden items-center justify-center p-4 z-[9998]">
+        <div class="confirm-card bg-white rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl">
+            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-5">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h2 class="text-xl font-black text-gray-800 mb-2">Kirim Tanggapan?</h2>
+            <p class="text-gray-500 text-sm mb-7 leading-relaxed">Pastikan semua jawaban sudah benar sebelum dikirim. Data yang sudah terkirim <strong>tidak dapat diubah</strong>.</p>
+            <div class="flex gap-3">
+                <button type="button" id="confirmCancel" class="flex-1 py-3.5 rounded-xl border-2 border-gray-200 text-gray-600 font-bold text-sm hover:bg-gray-50 transition-all">Periksa Lagi</button>
+                <button type="button" id="confirmSend" class="flex-1 py-3.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm transition-all shadow-md shadow-blue-200">Ya, Kirim!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Sukses -->
+    <div id="modalSuccess" class="fixed inset-0 bg-blue-900/40 backdrop-blur-sm hidden items-center justify-center p-4 z-[9999]">
+        <div class="modal-card bg-white rounded-[2.5rem] p-8 max-w-sm w-full text-center shadow-2xl">
             <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
                 <svg class="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
             </div>
             <h2 class="text-3xl font-black text-gray-800 mb-2 uppercase tracking-tighter">Berhasil!</h2>
             <p class="text-gray-500 mb-8 leading-relaxed px-4 text-sm font-medium">Terima kasih banyak. Masukan Anda sangat berarti bagi peningkatan kualitas layanan kami.</p>
+            <!-- FIX #10: Gunakan resetForm() bukan window.location.reload() -->
             <button type="button" id="closeBtn" class="w-full bg-blue-800 hover:bg-blue-900 text-white py-4 rounded-2xl font-black shadow-lg shadow-blue-200 transition-all active:scale-95 uppercase tracking-widest text-sm">
                 Selesai
             </button>
@@ -141,6 +232,8 @@
     </div>
 
     <script>
+        // FIX #7: URL masih di frontend (tidak bisa dihindari untuk GAS),
+        // tapi validasi extra bisa dilakukan di sisi Apps Script.
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyIQgHM21tDaENXzDAraYnVJUx84UuIj7GE7ld5TVRgykM7nUWkjWNkgcuHW6PVgZzC6A/exec';
 
         const questions = [
@@ -155,9 +248,11 @@
             { id: 9, text: "Bagaimana pendapat saudara tentang kualitas sarana dan prasarana pelayanan?", options: ["Buruk", "Cukup", "Baik", "Sangat baik"] }
         ];
 
+        // Render pertanyaan dinamis
         const container = document.getElementById('questionsContainer');
         questions.forEach(q => {
             const card = document.createElement('div');
+            card.id = `group-Q${q.id}`;
             card.className = "bg-white p-6 rounded-2xl shadow-sm border border-gray-200 transition-all";
             card.innerHTML = `
                 <div class="flex items-start mb-5">
@@ -167,11 +262,12 @@
                 <div class="grid grid-cols-1 gap-2.5">
                     ${q.options.map((opt, i) => `
                         <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-gray-50 transition-all border-gray-100 has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50 group">
-                            <input type="radio" name="Q${q.id}" value="${i+1}" required class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                            <input type="radio" name="Q${q.id}" value="${i+1}" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
                             <span class="ml-3 text-sm font-semibold text-gray-600 group-has-[:checked]:text-blue-800">${opt}</span>
                         </label>
                     `).join('')}
                 </div>
+                <span class="radio-error-msg">⚠ Wajib dipilih salah satu</span>
             `;
             container.appendChild(card);
         });
@@ -180,71 +276,159 @@
         const progressBar = document.getElementById('progressBar');
         const progressText = document.getElementById('progressText');
 
-        // ==========================================
-        // FITUR: PESAN VALIDASI KUSTOM
-        // ==========================================
-        const inputs = form.querySelectorAll('input, select, textarea');
-        
-        inputs.forEach(input => {
-            // Ketika field divalidasi dan ternyata kosong (invalid)
-            input.addEventListener('invalid', function() {
-                this.setCustomValidity('Tidak boleh kosong');
-            });
+        // ================================================
+        // FIX #4: Progress Bar — hitung per radio GROUP
+        // ================================================
+        const RADIO_GROUPS = ['Jam_Survei', ...questions.map(q => `Q${q.id}`)]; // 10 groups
+        const TEXT_FIELDS   = ['Unit_Layanan', 'Kota', 'Jenis_Kelamin', 'Usia', 'Pendidikan', 'Pekerjaan', 'Jenis_Layanan']; // 7 fields
+        const TOTAL_STEPS   = TEXT_FIELDS.length + RADIO_GROUPS.length; // 17 total
 
-            // Ketika user mulai mengetik/memilih, hapus pesan error-nya
-            input.addEventListener('input', function() {
-                this.setCustomValidity('');
-            });
-        });
-
-        // Progress Calculation
         function calculateProgress() {
-            const totalRequired = form.querySelectorAll('[required]').length;
-            const radioGroups = new Set();
-            form.querySelectorAll('input[type="radio"][required]').forEach(r => radioGroups.add(r.name));
-            
-            const totalSteps = (totalRequired - form.querySelectorAll('input[type="radio"][required]').length) + radioGroups.size;
-            
-            let filledSteps = 0;
-            form.querySelectorAll('input[type="text"]:valid, input[type="number"]:valid, select:valid, textarea:valid').forEach(() => filledSteps++);
-            radioGroups.forEach(name => {
-                if (form.querySelector(`input[name="${name}"]:checked`)) filledSteps++;
+            let filled = 0;
+
+            TEXT_FIELDS.forEach(name => {
+                const el = form.querySelector(`[name="${name}"]`);
+                if (el && el.value.trim() !== '') filled++;
             });
 
-            const percentage = Math.round((filledSteps / totalSteps) * 100);
-            progressBar.style.width = percentage + '%';
-            progressText.innerText = percentage + '%';
+            RADIO_GROUPS.forEach(name => {
+                if (form.querySelector(`input[name="${name}"]:checked`)) filled++;
+            });
+
+            const pct = Math.round((filled / TOTAL_STEPS) * 100);
+            progressBar.style.width = pct + '%';
+            progressText.innerText = pct + '%';
         }
 
         form.addEventListener('input', calculateProgress);
         form.addEventListener('change', calculateProgress);
 
-        // Submit Handler
-        form.addEventListener('submit', async (e) => {
+        // ================================================
+        // FIX #1 & #3: Validasi Manual (tanpa browser default)
+        // ================================================
+        function validateForm() {
+            let firstError = null;
+
+            // Validasi text/select fields
+            TEXT_FIELDS.forEach(name => {
+                const el = form.querySelector(`[name="${name}"]`);
+                const wrapper = el.closest('.space-y-1\\.5');
+                if (!el || !wrapper) return;
+
+                if (!el.value.trim()) {
+                    wrapper.classList.add('field-error');
+                    if (!firstError) firstError = el;
+                } else {
+                    wrapper.classList.remove('field-error');
+                }
+            });
+
+            // Validasi radio groups
+            RADIO_GROUPS.forEach(name => {
+                const groupEl = document.getElementById(`group-${name}`);
+                if (!groupEl) return;
+
+                if (!form.querySelector(`input[name="${name}"]:checked`)) {
+                    groupEl.classList.add('radio-group-error');
+                    if (!firstError) firstError = groupEl;
+                } else {
+                    groupEl.classList.remove('radio-group-error');
+                }
+            });
+
+            return firstError;
+        }
+
+        // Hapus error saat user mulai isi
+        // FIX #1: Tambahkan 'change' untuk radio & select
+        form.addEventListener('input', (e) => clearError(e.target));
+        form.addEventListener('change', (e) => clearError(e.target));
+
+        function clearError(target) {
+            // Text / select
+            const wrapper = target.closest('.space-y-1\\.5');
+            if (wrapper) wrapper.classList.remove('field-error');
+
+            // Radio
+            if (target.type === 'radio') {
+                const groupEl = document.getElementById(`group-${target.name}`);
+                if (groupEl) groupEl.classList.remove('radio-group-error');
+            }
+        }
+
+        // ================================================
+        // FIX #5: Modal Konfirmasi Sebelum Submit
+        // ================================================
+        const modalConfirm = document.getElementById('modalConfirm');
+        const modalSuccess = document.getElementById('modalSuccess');
+
+        form.addEventListener('submit', (e) => {
             e.preventDefault();
+
+            const firstError = validateForm();
+            if (firstError) {
+                // FIX #9: Scroll ke field error pertama
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.classList.add('shake');
+                setTimeout(() => firstError.classList.remove('shake'), 400);
+                return;
+            }
+
+            // Tampilkan modal konfirmasi
+            modalConfirm.classList.add('modal-active');
+        });
+
+        document.getElementById('confirmCancel').onclick = () => {
+            modalConfirm.classList.remove('modal-active');
+        };
+
+        document.getElementById('confirmSend').onclick = async () => {
+            modalConfirm.classList.remove('modal-active');
+
             const submitBtn = document.getElementById('submitBtn');
-            const modal = document.getElementById('modalSuccess');
-            
             submitBtn.classList.add('submitting');
             submitBtn.disabled = true;
-            
+
             try {
-                const response = await fetch(scriptURL, { method: 'POST', body: new FormData(form)});
-                if (response) {
-                    modal.classList.add('modal-active');
-                    form.reset();
-                    calculateProgress();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                // FIX #2: Cek response.ok bukan hanya if (response)
+                const response = await fetch(scriptURL, {
+                    method: 'POST',
+                    body: new FormData(form)
+                });
+
+                if (response.ok) {
+                    modalSuccess.classList.add('modal-active');
+                    resetFormClean();
+                } else {
+                    alert(`Gagal mengirim! Server merespons dengan kode: ${response.status}. Coba beberapa saat lagi.`);
                 }
             } catch (error) {
-                alert('Gagal mengirim! Coba cek koneksi internet Anda.');
+                alert('Gagal mengirim! Cek koneksi internet Anda dan coba lagi.');
+                console.error('Submit error:', error);
             } finally {
                 submitBtn.classList.remove('submitting');
                 submitBtn.disabled = false;
             }
-        });
+        };
 
-        document.getElementById('closeBtn').onclick = () => window.location.reload();
+        // FIX #10: Reset bersih tanpa reload halaman
+        function resetFormClean() {
+            form.reset();
+            calculateProgress();
+
+            // Hapus semua state error
+            form.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+            form.querySelectorAll('.radio-group-error').forEach(el => el.classList.remove('radio-group-error'));
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.getElementById('closeBtn').onclick = () => {
+            modalSuccess.classList.remove('modal-active');
+        };
+
+        // Hitung progress awal
+        calculateProgress();
     </script>
 </body>
 </html>
