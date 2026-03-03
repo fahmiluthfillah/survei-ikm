@@ -9,15 +9,18 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* Loading Animation */
         .loading { display: none; }
         .submitting .loading { display: inline-block; }
         .submitting .btn-text { display: none; }
         
-        /* Custom Checkbox/Radio Pulse */
         input[type="radio"]:checked + span { color: #1e40af; font-weight: 700; }
-        
         .modal-active { display: flex !important; }
+
+        /* Style agar ring merah saat error lebih terlihat */
+        input:invalid:focus, select:invalid:focus, textarea:invalid:focus {
+            --tw-ring-color: #ef4444;
+            border-color: #ef4444;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen pb-12">
@@ -76,7 +79,7 @@
 
                     <div class="space-y-1.5">
                         <label class="text-[11px] font-bold text-gray-500 uppercase ml-1">Jenis Kelamin</label>
-                        <select name="Jenis_Kelamin" required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-200 transition-all">
+                        <select name="Jenis_Kelamin" required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-200 transition-all text-sm">
                             <option value="">Pilih...</option>
                             <option value="L">Laki-laki (L)</option>
                             <option value="P">Perempuan (P)</option>
@@ -88,14 +91,14 @@
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-[11px] font-bold text-gray-500 uppercase ml-1">Pendidikan</label>
-                        <select name="Pendidikan" required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-200 transition-all">
+                        <select name="Pendidikan" required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-200 transition-all text-sm">
                             <option value="">Pilih...</option>
                             <option>SD</option><option>SMP</option><option>SMA</option><option>D3</option><option>S1</option><option>S2</option><option>S3</option>
                         </select>
                     </div>
                     <div class="space-y-1.5">
                         <label class="text-[11px] font-bold text-gray-500 uppercase ml-1">Pekerjaan</label>
-                        <select name="Pekerjaan" required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-200 transition-all">
+                        <select name="Pekerjaan" required class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-white border-gray-200 transition-all text-sm">
                             <option value="">Pilih...</option>
                             <option>PNS</option><option>TNI</option><option>POLRI</option><option>SWASTA</option><option>WIRAUSAHA</option><option>LAINNYA</option>
                         </select>
@@ -112,7 +115,7 @@
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
                 <div class="flex items-start mb-4">
                     <span class="bg-blue-100 text-blue-700 w-7 h-7 rounded-lg flex items-center justify-center font-bold text-sm mr-3 mt-0.5 shadow-sm">10</span>
-                    <p class="text-gray-800 font-bold leading-relaxed tracking-tight">Kritik / Saran untuk RS Bhayangkara Bondowoso</p>
+                    <p class="text-gray-800 font-bold leading-relaxed tracking-tight text-[15px]">Kritik / Saran untuk RS Bhayangkara Bondowoso</p>
                 </div>
                 <textarea name="Kritik_Saran" rows="4" placeholder="Tuliskan kritik atau saran Anda di sini..." required class="w-full px-4 py-4 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-100 bg-gray-50 resize-none transition-all focus:bg-white"></textarea>
             </div>
@@ -152,11 +155,10 @@
             { id: 9, text: "Bagaimana pendapat saudara tentang kualitas sarana dan prasarana pelayanan?", options: ["Buruk", "Cukup", "Baik", "Sangat baik"] }
         ];
 
-        // Render Questions
         const container = document.getElementById('questionsContainer');
         questions.forEach(q => {
             const card = document.createElement('div');
-            card.className = "bg-white p-6 rounded-2xl shadow-sm border border-gray-200 question-card transition-all";
+            card.className = "bg-white p-6 rounded-2xl shadow-sm border border-gray-200 transition-all";
             card.innerHTML = `
                 <div class="flex items-start mb-5">
                     <span class="bg-blue-50 text-blue-700 w-7 h-7 rounded-lg flex items-center justify-center font-extrabold text-sm mr-3 mt-0.5 shadow-sm">${q.id}</span>
@@ -175,24 +177,36 @@
         });
 
         const form = document.getElementById('surveyForm');
-        const modal = document.getElementById('modalSuccess');
-        const closeBtn = document.getElementById('closeBtn');
         const progressBar = document.getElementById('progressBar');
         const progressText = document.getElementById('progressText');
 
-        // Logic Progress Bar
+        // ==========================================
+        // FITUR: PESAN VALIDASI KUSTOM
+        // ==========================================
+        const inputs = form.querySelectorAll('input, select, textarea');
+        
+        inputs.forEach(input => {
+            // Ketika field divalidasi dan ternyata kosong (invalid)
+            input.addEventListener('invalid', function() {
+                this.setCustomValidity('Tidak boleh kosong');
+            });
+
+            // Ketika user mulai mengetik/memilih, hapus pesan error-nya
+            input.addEventListener('input', function() {
+                this.setCustomValidity('');
+            });
+        });
+
+        // Progress Calculation
         function calculateProgress() {
             const totalRequired = form.querySelectorAll('[required]').length;
-            // Untuk radio group, kita hitung group name-nya saja
             const radioGroups = new Set();
             form.querySelectorAll('input[type="radio"][required]').forEach(r => radioGroups.add(r.name));
             
             const totalSteps = (totalRequired - form.querySelectorAll('input[type="radio"][required]').length) + radioGroups.size;
             
             let filledSteps = 0;
-            // Hitung text/select
             form.querySelectorAll('input[type="text"]:valid, input[type="number"]:valid, select:valid, textarea:valid').forEach(() => filledSteps++);
-            // Hitung radio
             radioGroups.forEach(name => {
                 if (form.querySelector(`input[name="${name}"]:checked`)) filledSteps++;
             });
@@ -205,20 +219,17 @@
         form.addEventListener('input', calculateProgress);
         form.addEventListener('change', calculateProgress);
 
-        // Handle Form Submit
+        // Submit Handler
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const submitBtn = document.getElementById('submitBtn');
+            const modal = document.getElementById('modalSuccess');
             
             submitBtn.classList.add('submitting');
             submitBtn.disabled = true;
             
             try {
-                const response = await fetch(scriptURL, { 
-                    method: 'POST', 
-                    body: new FormData(form)
-                });
-                
+                const response = await fetch(scriptURL, { method: 'POST', body: new FormData(form)});
                 if (response) {
                     modal.classList.add('modal-active');
                     form.reset();
@@ -226,15 +237,14 @@
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             } catch (error) {
-                console.error('Error!', error.message);
-                alert('Gagal mengirim! Pastikan Anda terhubung ke internet.');
+                alert('Gagal mengirim! Coba cek koneksi internet Anda.');
             } finally {
                 submitBtn.classList.remove('submitting');
                 submitBtn.disabled = false;
             }
         });
 
-        closeBtn.onclick = () => window.location.reload();
+        document.getElementById('closeBtn').onclick = () => window.location.reload();
     </script>
 </body>
 </html>
