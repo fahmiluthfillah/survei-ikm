@@ -182,15 +182,16 @@
             <!-- Pertanyaan 1–9 (dibuat dinamis via JS) -->
             <div id="questionsContainer" class="space-y-6"></div>
 
-            <!-- FIX #6: Kritik/Saran → OPSIONAL (hapus data-required) -->
+            <!-- Kritik/Saran → WAJIB DIISI -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
                 <div class="flex items-start mb-4">
                     <span class="bg-blue-100 text-blue-700 w-7 h-7 rounded-lg flex items-center justify-center font-bold text-sm mr-3 mt-0.5 shadow-sm">10</span>
-                    <div>
-                        <p class="text-gray-800 font-bold leading-relaxed tracking-tight text-[15px]">Kritik / Saran untuk RS Bhayangkara Bondowoso</p>
-                    </div>
+                    <p class="text-gray-800 font-bold leading-relaxed tracking-tight text-[15px]">Kritik / Saran untuk RS Bhayangkara Bondowoso</p>
                 </div>
-                <textarea name="Kritik_Saran" rows="4" placeholder="Tuliskan kritik atau saran Anda di sini..." data-required class="w-full px-4 py-4 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-100 bg-gray-50 resize-none transition-all focus:bg-white"></textarea>
+                <div class="space-y-1.5">
+                    <textarea name="Kritik_Saran" rows="4" placeholder="Tuliskan kritik atau saran Anda di sini..." data-required class="w-full px-4 py-4 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 border-gray-100 bg-gray-50 resize-none transition-all focus:bg-white"></textarea>
+                    <span class="error-msg">⚠ Wajib diisi — kritik & saran Anda sangat berarti bagi RS!</span>
+                </div>
             </div>
 
             <button type="submit" id="submitBtn" class="group w-full bg-blue-700 hover:bg-blue-800 text-white font-extrabold py-5 rounded-2xl shadow-xl shadow-blue-200 transition-all transform active:scale-[0.98] flex items-center justify-center">
@@ -279,8 +280,8 @@
         // FIX #4: Progress Bar — hitung per radio GROUP
         // ================================================
         const RADIO_GROUPS = ['Jam_Survei', ...questions.map(q => `Q${q.id}`)]; // 10 groups
-        const TEXT_FIELDS   = ['Unit_Layanan', 'Kota', 'Jenis_Kelamin', 'Usia', 'Pendidikan', 'Pekerjaan', 'Jenis_Layanan']; // 7 fields
-        const TOTAL_STEPS   = TEXT_FIELDS.length + RADIO_GROUPS.length; // 17 total
+        const TEXT_FIELDS   = ['Unit_Layanan', 'Kota', 'Jenis_Kelamin', 'Usia', 'Pendidikan', 'Pekerjaan', 'Jenis_Layanan', 'Kritik_Saran']; // 8 fields
+        const TOTAL_STEPS   = TEXT_FIELDS.length + RADIO_GROUPS.length; // 18 total
 
         function calculateProgress() {
             let filled = 0;
