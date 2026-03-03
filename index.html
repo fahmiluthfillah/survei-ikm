@@ -234,7 +234,7 @@
     <script>
         // FIX #7: URL masih di frontend (tidak bisa dihindari untuk GAS),
         // tapi validasi extra bisa dilakukan di sisi Apps Script.
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyIQgHM21tDaENXzDAraYnVJUx84UuIj7GE7ld5TVRgykM7nUWkjWNkgcuHW6PVgZzC6A/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxfXICrTOAZrIYLdCz56ZNVNowkOBOWYdTuyvBa08d6ZX_QeBuDbK8YbB7R3PoRwyzDNw/exec';
 
         const questions = [
             { id: 1, text: "Bagaimana pendapat saudara tentang persyaratan pelayanan dengan jenis pelayanannya?", options: ["Tidak sesuai", "Kurang sesuai", "Sesuai", "Sangat sesuai"] },
@@ -396,11 +396,13 @@
                     body: new FormData(form)
                 });
 
-                if (response.ok) {
+                const result = await response.json();
+
+                if (result.result === 'success') {
                     modalSuccess.classList.add('modal-active');
                     resetFormClean();
                 } else {
-                    alert(`Gagal mengirim! Server merespons dengan kode: ${response.status}. Coba beberapa saat lagi.`);
+                    alert('Gagal mengirim: ' + (result.error || 'Terjadi kesalahan, coba lagi.'));
                 }
             } catch (error) {
                 alert('Gagal mengirim! Cek koneksi internet Anda dan coba lagi.');
